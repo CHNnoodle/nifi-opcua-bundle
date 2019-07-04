@@ -97,8 +97,8 @@ public class GetOPCData extends AbstractProcessor {
             .displayName("Data Format")
             .description("The format the data should be in, either TEMPUS, CSV or JSON")
             .required(true)
-            .allowableValues("TEMPUS","JSON","CSV")
-            .defaultValue("TEMPUS")
+            .allowableValues("TEMPUS","JSON","OBJECTJSON","CSV")
+            .defaultValue("OBJECTJSON")
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 

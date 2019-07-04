@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import org.apache.nifi.annotation.documentation.CapabilityDescription;
 import org.apache.nifi.annotation.documentation.Tags;
 import org.apache.nifi.annotation.lifecycle.OnDisabled;
@@ -63,50 +64,50 @@ public class StandardOPCUAService extends AbstractControllerService implements O
 
     // Properties
     public static final PropertyDescriptor ENDPOINT = new PropertyDescriptor
-            .Builder().name("Endpoint URL")
-            .description("the opc.tcp address of the opc ua server")
-            .required(true)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
+        .Builder().name("Endpoint URL")
+        .description("the opc.tcp address of the opc ua server")
+        .required(true)
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
     public static final PropertyDescriptor SERVER_CERT = new PropertyDescriptor
-            .Builder().name("Certificate for Server application")
-            .description("Certificate in .der format for server Nifi will connect, if left blank Nifi will attempt to retreive the certificate from the server")
-            .addValidator(StandardValidators.FILE_EXISTS_VALIDATOR)
-            .build();
+        .Builder().name("Certificate for Server application")
+        .description("Certificate in .der format for server Nifi will connect, if left blank Nifi will attempt to retreive the certificate from the server")
+        .addValidator(StandardValidators.FILE_EXISTS_VALIDATOR)
+        .build();
     public static final PropertyDescriptor SECURITY_POLICY = new PropertyDescriptor
-            .Builder().name("Security Policy")
-            .description("How should Nifi create the connection with the UA server")
-            .required(true)
-            .allowableValues("None", "Basic128Rsa15", "Basic256", "Basic256Rsa256")
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
+        .Builder().name("Security Policy")
+        .description("How should Nifi create the connection with the UA server")
+        .required(true)
+        .allowableValues("None", "Basic128Rsa15", "Basic256", "Basic256Rsa256")
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
     public static final PropertyDescriptor AUTH_POLICY = new PropertyDescriptor
-            .Builder().name("Authentication Policy")
-            .description("How should Nifi authenticate with the UA server")
-            .required(true)
-            .defaultValue("Anon")
-            .allowableValues("Anon", "Username")
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
+        .Builder().name("Authentication Policy")
+        .description("How should Nifi authenticate with the UA server")
+        .required(true)
+        .defaultValue("Anon")
+        .allowableValues("Anon", "Username")
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
     public static final PropertyDescriptor USERNAME = new PropertyDescriptor
-            .Builder().name("User Name")
-            .description("The user name to be used for the connection.")
-            .required(false)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
+        .Builder().name("User Name")
+        .description("The user name to be used for the connection.")
+        .required(false)
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
     public static final PropertyDescriptor PASSWORD = new PropertyDescriptor
-            .Builder().name("Password")
-            .description("The Password to be used for the connection")
-            .required(false)
-            .sensitive(true)
-            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
-            .build();
+        .Builder().name("Password")
+        .description("The Password to be used for the connection")
+        .required(false)
+        .sensitive(true)
+        .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+        .build();
     public static final PropertyDescriptor APPLICATION_NAME = new PropertyDescriptor
-            .Builder().name("Application Name")
-            .description("The application name is used to label certificates identifying this application")
-            .required(true)
-            .addValidator(StandardValidators.NON_BLANK_VALIDATOR)
-            .build();
+        .Builder().name("Application Name")
+        .description("The application name is used to label certificates identifying this application")
+        .required(true)
+        .addValidator(StandardValidators.NON_BLANK_VALIDATOR)
+        .build();
 
     private static final List<PropertyDescriptor> properties;
     // Global session variables used by all processors using an instance
@@ -134,13 +135,12 @@ public class StandardOPCUAService extends AbstractControllerService implements O
     private double timestamp;
 
     private String parseNodeTree(
-            String print_indentation,
-            int recursiveDepth,
-            int max_recursiveDepth,
-            ExpandedNodeId expandedNodeId,
-            UnsignedInteger max_reference_per_node,
-            ComponentLog logger) {
-
+        String print_indentation,
+        int recursiveDepth,
+        int max_recursiveDepth,
+        ExpandedNodeId expandedNodeId,
+        UnsignedInteger max_reference_per_node,
+        ComponentLog logger) {
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -253,13 +253,13 @@ public class StandardOPCUAService extends AbstractControllerService implements O
         KeyPair myClientApplicationInstanceCertificate = null;
         KeyPair myHttpsCertificate = null;
 
-        if (userName == null){
+        if (userName == null) {
             userName = context.getProperty(USERNAME).getValue();
         }
-        if (password == null){
+        if (password == null) {
             password = context.getProperty(PASSWORD).getValue();
         }
-        if (authType == null){
+        if (authType == null) {
             authType = context.getProperty(AUTH_POLICY).getValue();
         }
 
@@ -308,7 +308,6 @@ public class StandardOPCUAService extends AbstractControllerService implements O
         opcClient.getApplication().addLocale(Locale.ENGLISH);
         opcClient.getApplication().setApplicationName(new LocalizedText(context.getProperty(APPLICATION_NAME).getValue(), Locale.ENGLISH));
         opcClient.getApplication().setProductUri("urn:" + context.getProperty(APPLICATION_NAME).getValue());
-
 
         // if a certificate is provided
         if (context.getProperty(SERVER_CERT).getValue() != null) {
@@ -406,7 +405,6 @@ public class StandardOPCUAService extends AbstractControllerService implements O
             logger.error(e.getMessage());
         }
 
-
         logger.debug("OPC UA client session ready");
 
     }
@@ -434,7 +432,7 @@ public class StandardOPCUAService extends AbstractControllerService implements O
             try {
                 activateSession(authType, userName, password);
             } catch (ServiceResultException e) {
-                logger.error("StandardOPCUAService.updateSession() :- issue updating session"+e.getMessage());
+                logger.error("StandardOPCUAService.updateSession() :- issue updating session" + e.getMessage());
             }
             return true;
 
@@ -442,7 +440,7 @@ public class StandardOPCUAService extends AbstractControllerService implements O
             try {
 
                 logger.debug("StandardOPCUAService.updateSession() :- Creating new session - " +
-                        "endpointDescription: "+endpointDescription);
+                             "endpointDescription: " + endpointDescription);
 
                 // TODO future should support multi session management
                 currentSession = opcClient.createSessionChannel(endpointDescription);
@@ -468,8 +466,9 @@ public class StandardOPCUAService extends AbstractControllerService implements O
         final ComponentLog logger = getLogger();
 
         try {
-            if (currentSession != null)
+            if (currentSession != null) {
                 currentSession.close();
+            }
         } catch (ServiceResultException e) {
             logger.error("Error shutting down the session - " + e.getMessage());
         } catch (Exception e) {
@@ -479,7 +478,8 @@ public class StandardOPCUAService extends AbstractControllerService implements O
     }
 
     @Override
-    public byte[] getValue(List<String> reqTagnames, String returnTimestamp, String excludeNullValue, String nullValueString, String dataFormat, boolean longTimestamp, String deviceType, String deviceName) throws ProcessException {
+    public byte[] getValue(List<String> reqTagnames, String returnTimestamp, String excludeNullValue, String nullValueString, String dataFormat, boolean longTimestamp, String deviceType,
+                           String deviceName) throws ProcessException {
         final ComponentLog logger = getLogger();
 
         //Create the nodes to read array
@@ -516,14 +516,17 @@ public class StandardOPCUAService extends AbstractControllerService implements O
                 } else {
                     // Build Response according to Data Format
                     switch (dataFormat) {
-                        case "CSV" :
+                        case "CSV":
                             serverResponse = getDataInCSV(nodesToRead, values, returnTimestamp, excludeNullValue, nullValueString, longTimestamp);
                             serverResponse.trim();
                             break;
-                        case "JSON" :
+                        case "JSON":
                             serverResponse = getDataInJSON(nodesToRead, values, returnTimestamp, excludeNullValue, nullValueString, longTimestamp);
                             break;
-                        case "TEMPUS" :
+                        case "OBJECTJSON":
+                            serverResponse = getDataInObjectJSON(nodesToRead, values, returnTimestamp, excludeNullValue, nullValueString, longTimestamp);
+                            break;
+                        case "TEMPUS":
                             boolean isGateway = deviceType.equals("Gateway");
                             serverResponse = getDataInTempus(nodesToRead, values, returnTimestamp, excludeNullValue, nullValueString, longTimestamp, isGateway, deviceName);
                             break;
@@ -565,15 +568,16 @@ public class StandardOPCUAService extends AbstractControllerService implements O
                 valueLine += nodesToRead[i].getNodeId().toString() + ",";
                 valueLine += getTimeStamp(values[i], returnTimestamp, longTimestamp) + ",";
                 valueLine += values[i].getValue().toString() + ","
-                          + values[i].getStatusCode().getValue().toString()
-                          + System.getProperty("line.separator");
+                             + values[i].getStatusCode().getValue().toString()
+                             + System.getProperty("line.separator");
 
             } catch (Exception ex) {
                 getLogger().error("Error parsing result for" + nodesToRead[i].getNodeId().toString());
                 valueLine = "";
             }
-            if (valueLine.isEmpty())
+            if (valueLine.isEmpty()) {
                 continue;
+            }
 
             serverResponse += valueLine;
         }
@@ -596,24 +600,25 @@ public class StandardOPCUAService extends AbstractControllerService implements O
                 }
                 ts = getTimeStamp(values[i], returnTimestamp, longTimestamp); //timestamp
                 String[] key = nodesToRead[i].getNodeId().toString().split("=");
-                name =  key[key.length - 1].toString();
+                name = key[key.length - 1].toString();
                 value = values[i].getValue().getValue(); //value
-                if (value == null){
+                if (value == null) {
                     continue;
                 }
                 Class clazz = value.getClass();
                 quality = values[i].getStatusCode().getValue();
                 // Build JSON element and add to JSON Array
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("id",name);
+                jsonObject.put("id", name);
                 jsonObject.put("ts", ts);
-                if (clazz.equals(Double.class) || clazz.equals(Short.class) || clazz.equals(Integer.class))
+                if (clazz.equals(Double.class) || clazz.equals(Short.class) || clazz.equals(Integer.class)) {
                     jsonObject.put("vd", value);
-                else if (clazz.equals(Long.class) || clazz.equals(Float.class))
+                } else if (clazz.equals(Long.class) || clazz.equals(Float.class)) {
                     jsonObject.put("vd", value);
-                else
+                } else {
                     jsonObject.put("vs", value.toString().trim());
-                jsonObject.put("q",quality);
+                }
+                jsonObject.put("q", quality);
                 jsonArray.put(jsonObject);
             } catch (Exception ex) {
                 getLogger().error("Error parsing result for" + nodesToRead[i].getNodeId().toString());
@@ -621,9 +626,49 @@ public class StandardOPCUAService extends AbstractControllerService implements O
         }
         // Building JSON Data
         JSONObject finalJsonObject = new JSONObject()
-                                    .put("values", jsonArray);
+            .put("values", jsonArray);
 
         return finalJsonObject.toString();
+    }
+
+    private String getDataInObjectJSON(ReadValueId nodesToRead[], DataValue values[], String returnTimestamp, String excludeNullValue, String nullValueString, boolean longTimestamp) {
+        Object ts = null;
+        String name = null;
+        Object value = null;
+        JSONObject jsonObject = new JSONObject();
+
+        for (int i = 0; i < values.length; i++) {
+            try {
+                // Add JSON Object for sensor values
+                if (excludeNullValue.equals("true") && values[i].getValue().toString().equals(nullValueString)) {
+                    getLogger().debug("Null value returned for " + values[i].getValue().toString() + " -- Skipping because property is set");
+                    continue;
+                }
+                if (i == 0) {
+                    ts = getTimeStamp(values[i], returnTimestamp, longTimestamp); //timestamp
+                    jsonObject.put("ts", ts);
+                }
+                String[] key = nodesToRead[i].getNodeId().toString().split("=");
+                name = key[key.length - 1];
+                value = values[i].getValue().getValue(); //value
+                if (value == null) {
+                    continue;
+                }
+                Class clazz = value.getClass();
+
+                if (clazz.equals(Double.class) || clazz.equals(Short.class) || clazz.equals(Integer.class)) {
+                    jsonObject.put(name, value);
+                } else if (clazz.equals(Long.class) || clazz.equals(Float.class)) {
+                    jsonObject.put(name, value);
+                } else {
+                    jsonObject.put(name, value.toString().trim());
+                }
+            } catch (Exception ex) {
+                getLogger().error("Error parsing result for" + nodesToRead[i].getNodeId().toString());
+            }
+        }
+
+        return jsonObject.toString();
     }
 
     private String getDataInTempus(ReadValueId nodesToRead[], DataValue values[], String returnTimestamp, String excludeNullValue,
@@ -649,13 +694,12 @@ public class StandardOPCUAService extends AbstractControllerService implements O
 
                 ts = getTimeStamp(values[i], returnTimestamp, longTimestamp); //timestamp
 
-                if (ts == null){
+                if (ts == null) {
                     continue;
                 }
 
                 // handle multiple timestamps
-                if (! newTimeStamp.equalsIgnoreCase(ts) )
-                {
+                if (!newTimeStamp.equalsIgnoreCase(ts)) {
                     newTimeStamp = ts;
                     dataValue = new com.hashmapinc.tempus.processors.DataValue();
                     dataValue.setTimeStamp(newTimeStamp);
@@ -664,15 +708,15 @@ public class StandardOPCUAService extends AbstractControllerService implements O
 
                 // get name, value and quality
                 String[] key = nodesToRead[i].getNodeId().toString().split("=");
-                name =  key[key.length - 1].toString();
+                name = key[key.length - 1].toString();
                 value = values[i].getValue().getValue();
 
-                if (value == null){
+                if (value == null) {
                     continue;
                 }
                 quality = values[i].getStatusCode().getValue();
-                dataValue.addValue(name,value);
-                dataValue.addValue(name+"-quality",quality);
+                dataValue.addValue(name, value);
+                dataValue.addValue(name + "-quality", quality);
             } catch (Exception ex) {
                 getLogger().error("Error parsing result for" + nodesToRead[i].getNodeId().toString());
             }
@@ -751,7 +795,7 @@ public class StandardOPCUAService extends AbstractControllerService implements O
         return ts;
     }*/
 
-    private String getTimeStamp(DataValue value, String returnTimestamp, boolean longTimestamp) throws Exception{
+    private String getTimeStamp(DataValue value, String returnTimestamp, boolean longTimestamp) throws Exception {
         String ts = null;
         LocalDateTime ldt = null;
         DateTimeFormatter formatPattern = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -759,11 +803,10 @@ public class StandardOPCUAService extends AbstractControllerService implements O
         // Get Timestamp
         try {
 
-            if(!value.isNull())
-            {
+            if (!value.isNull()) {
                 if (returnTimestamp.equals("ServerTimestamp")) {
                     if (longTimestamp) {
-                        ts = value.getServerTimestamp().getTimeInMillis()+"";
+                        ts = value.getServerTimestamp().getTimeInMillis() + "";
                     } else {
 
                         ts = Utils.convertStringDateFormat(value.getServerTimestamp().toString(), "MM/dd/yy HH:mm:ss.SSSSSSS z", "yyyy-MM-dd HH:mm:ss.SSS");
@@ -772,7 +815,7 @@ public class StandardOPCUAService extends AbstractControllerService implements O
                 }
                 if (returnTimestamp.equals("SourceTimestamp")) {
                     if (longTimestamp) {
-                        ts = value.getSourceTimestamp().getTimeInMillis()+"";
+                        ts = value.getSourceTimestamp().getTimeInMillis() + "";
                     } else {
 
                         ts = Utils.convertStringDateFormat(value.getSourceTimestamp().toString(), "MM/dd/yy HH:mm:ss.SSSSSSS z", "yyyy-MM-dd HH:mm:ss.SSS");
